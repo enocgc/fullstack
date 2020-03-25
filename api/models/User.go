@@ -12,11 +12,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
+type UserParkinAdmin struct {
 	ID        uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	Nickname  string    `gorm:"size:255;not null;unique" json:"nickname"`
+	Username  string    `gorm:"size:255;not null;unique" json:"username"`
 	Email     string    `gorm:"size:100;not null;unique" json:"email"`
+	Phone     string    `gorm:"size:100;not null;" json:"phone"`
 	Password  string    `gorm:"size:100;not null;" json:"password"`
+	TipoLogin string    `gorm:"size:100;not null;" json:"tipologin"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
@@ -29,7 +31,7 @@ func VerifyPassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-func (u *User) BeforeSave() error {
+func (u *UserParkinAdmin) BeforeSave() error {
 	hashedPassword, err := Hash(u.Password)
 	if err != nil {
 		return err
@@ -38,18 +40,18 @@ func (u *User) BeforeSave() error {
 	return nil
 }
 
-func (u *User) Prepare() {
+func (u *UserParkinAdmin) Prepare() {
 	u.ID = 0
-	u.Nickname = html.EscapeString(strings.TrimSpace(u.Nickname))
+	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	u.Email = html.EscapeString(strings.TrimSpace(u.Email))
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()
 }
 
-func (u *User) Validate(action string) error {
+func (u *UserParkinAdmin) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "update":
-		if u.Nickname == "" {
+		if u.Username == "" {
 			return errors.New("Required Nickname")
 		}
 		if u.Password == "" {
@@ -76,7 +78,7 @@ func (u *User) Validate(action string) error {
 		return nil
 
 	default:
-		if u.Nickname == "" {
+		if u.Username == "" {
 			return errors.New("Required Nickname")
 		}
 		if u.Password == "" {
@@ -92,67 +94,68 @@ func (u *User) Validate(action string) error {
 	}
 }
 
-func (u *User) SaveUser(db *gorm.DB) (*User, error) {
+func (u *UserParkinAdmin) SaveUser(db *gorm.DB) (*UserParkinAdmin, error) {
 
 	var err error
 	err = db.Debug().Create(&u).Error
 	if err != nil {
-		return &User{}, err
+		return &UserParkinAdmin{}, err
 	}
 	return u, nil
 }
 
-func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
+func (u *UserParkinAdmin) FindAllUsers(db *gorm.DB) (*[]UserParkinAdmin, error) {
 	var err error
-	users := []User{}
-	err = db.Debug().Model(&User{}).Limit(100).Find(&users).Error
+	users := []UserParkinAdmin{}
+	err = db.Debug().Model(&UserParkinAdmin{}).Limit(100).Find(&users).Error
 	if err != nil {
-		return &[]User{}, err
+		return &[]UserParkinAdmin{}, err
 	}
 	return &users, err
 }
 
-func (u *User) FindUserByID(db *gorm.DB, uid uint32) (*User, error) {
+func (u *UserParkinAdmin) FindUserByID(db *gorm.DB, uid uint32) (*UserParkinAdmin, error) {
 	var err error
-	err = db.Debug().Model(User{}).Where("id = ?", uid).Take(&u).Error
+	err = db.Debug().Model(UserParkinAdmin{}).Where("id = ?", uid).Take(&u).Error
 	if err != nil {
-		return &User{}, err
+		return &UserParkinAdmin{}, err
 	}
 	if gorm.IsRecordNotFoundError(err) {
-		return &User{}, errors.New("User Not Found")
+		return &UserParkinAdmin{}, errors.New("User Not Found")
 	}
 	return u, err
 }
 
-func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
+func (u *UserParkinAdmin) UpdateAUser(db *gorm.DB, uid uint32) (*UserParkinAdmin, error) {
 
 	// To hash the password
 	err := u.BeforeSave()
 	if err != nil {
 		log.Fatal(err)
 	}
-	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
+	db = db.Debug().Model(&UserParkinAdmin{}).Where("id = ?", uid).Take(&UserParkinAdmin{}).UpdateColumns(
 		map[string]interface{}{
 			"password":  u.Password,
-			"nickname":  u.Nickname,
+			"nickname":  u.Username,
 			"email":     u.Email,
+			"phone":     u.Phone,
 			"update_at": time.Now(),
 		},
 	)
 	if db.Error != nil {
-		return &User{}, db.Error
+		return &UserParkinAdmin{}, db.Error
 	}
 	// This is the display the updated user
-	err = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&u).Error
+	err = db.Debug().Model(&UserParkinAdmin{}).Where("id = ?", uid).Take(&u).Error
 	if err != nil {
-		return &User{}, err
+		return &UserParkinAdmin{}, err
 	}
 	return u, nil
 }
 
-func (u *User) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
+func (u *UserParkinAdmin) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
 
-	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).Delete(&User{})
+	db = db.Debug().Model(&UserParkinAdmin{}).Where("id = ?", uid).Take(&UserParkinAdmin{}).Delete(&UserParkinAdmin{})
 
 	if db.Error != nil {
 		return 0, db.Error
