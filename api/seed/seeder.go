@@ -34,6 +34,26 @@ var posts = []models.Post{
 		Content: "Hello world 2",
 	},
 }
+var parkInDetail = []models.ParkInDetail{
+	models.ParkInDetail{
+		Horario:       "lunea a viernes de 8:00 am a 10:00 pm",
+		NombreParqueo: "Parque Prkin V1 1",
+		Detalle:       "Este es el primer parqueo",
+		Lat:           "1",
+		Long:          "2",
+		Phone:         "83873481",
+		SitioWeb:      "parkIn.com",
+	},
+	models.ParkInDetail{
+		Horario:       "lunea a viernes de 8:00 am a 10:00 pm",
+		NombreParqueo: "Parque Prkin V1 2",
+		Detalle:       "Este es el primer parqueo2",
+		Lat:           "1",
+		Long:          "2",
+		Phone:         "83873481",
+		SitioWeb:      "parkIn2.com",
+	},
+}
 
 func Load(db *gorm.DB) {
 
@@ -51,16 +71,36 @@ func Load(db *gorm.DB) {
 		log.Fatalf("attaching foreign key error: %v", err)
 	}
 
+	// ParkInDetail
+	// err = db.Debug().DropTableIfExists(&models.ParkInDetail{}, &models.UserParkinAdmin{}).Error
+	// if err != nil {
+	// 	log.Fatalf("cannot drop table: %v", err)
+	// }
+	err = db.Debug().AutoMigrate(&models.UserParkinAdmin{}, &models.ParkInDetail{}).Error
+	if err != nil {
+		log.Fatalf("cannot migrate table: %v", err)
+	}
+
+	err = db.Debug().Model(&models.ParkInDetail{}).AddForeignKey("fk_park_in_admin", "user_parkin_admins(id)", "cascade", "cascade").Error
+	if err != nil {
+		log.Fatalf("attaching foreign key error: %v", err)
+	}
+
 	for i, _ := range userParkinAdmin {
 		err = db.Debug().Model(&models.UserParkinAdmin{}).Create(&userParkinAdmin[i]).Error
 		if err != nil {
 			log.Fatalf("cannot seed users table: %v", err)
 		}
 		posts[i].AuthorID = userParkinAdmin[i].ID
+		parkInDetail[i].Fk_ParkInAdmin = userParkinAdmin[i].ID
 
 		err = db.Debug().Model(&models.Post{}).Create(&posts[i]).Error
 		if err != nil {
 			log.Fatalf("cannot seed posts table: %v", err)
+		}
+		err = db.Debug().Model(&models.ParkInDetail{}).Create(&parkInDetail[i]).Error
+		if err != nil {
+			log.Fatalf("cannot seed parkInDetail table: %v", err)
 		}
 	}
 }

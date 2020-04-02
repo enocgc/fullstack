@@ -13,7 +13,7 @@ type ParkInDetail struct {
 	Long           string    `gorm:"size:100;not null;" json:"long"`
 	Phone          string    `gorm:"size:100;not null;" json:"phone"`
 	SitioWeb       string    `gorm:"size:100;not null;" json:"sitioWeb"`
-	Fk_ParkInAdmin uint32    `gorm:"not null" json:"fkparkinadmin"`
+	Fk_ParkInAdmin uint32    `gorm:"not null" json:"fk_park_in_admin"`
 	CreatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
