@@ -55,8 +55,6 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Data: map[string]interface{}{"id": userCreated.ID, "username": userCreated.Username,
 			"email":      userCreated.Email,
 			"phone":      userCreated.Phone,
-			"password":   userCreated.Password,
-			"tipologin":  userCreated.TipoLogin,
 			"created_at": userCreated.CreatedAt,
 			"updated_at": userCreated.UpdatedAt},
 	})
