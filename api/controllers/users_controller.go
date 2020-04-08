@@ -37,19 +37,9 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		// formattedError := formaterror.FormatError(err.Error())
+		formattedError := formaterror.FormatError(err.Error())
 
-		responses.JSON(w, http.StatusInternalServerError, struct {
-			Message string                 `json:"menssage"`
-			Status  int                    `json:"status"`
-			Error   bool                   `json:"error"`
-			Data    map[string]interface{} `json:"data"`
-		}{
-			Message: "Error de Registro",
-			Status:  500,
-			Error:   true,
-			Data:    nil,
-		})
+		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.ID))
