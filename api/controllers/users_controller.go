@@ -53,10 +53,8 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Status:  http.StatusUnprocessableEntity,
 		Error:   false,
 		Data: map[string]interface{}{"id": userCreated.ID, "username": userCreated.Username,
-			"email":      userCreated.Email,
-			"phone":      userCreated.Phone,
-			"created_at": userCreated.CreatedAt,
-			"updated_at": userCreated.UpdatedAt},
+			"email": userCreated.Email,
+			"phone": userCreated.Phone},
 	})
 }
 
