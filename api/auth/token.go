@@ -13,10 +13,13 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func CreateToken(user_id uint32) (string, error) {
+func CreateToken(user_id uint32, user_email string, user_userName string, user_phone string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = user_id
+	claims["user_email"] = user_email
+	claims["user_userName"] = user_userName
+	claims["user_phone"] = user_phone
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))

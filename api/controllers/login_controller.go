@@ -8,7 +8,6 @@ import (
 	"github.com/enocgc/fullstack/api/auth"
 	"github.com/enocgc/fullstack/api/models"
 	"github.com/enocgc/fullstack/api/responses"
-	"github.com/enocgc/fullstack/api/utils/formaterror"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,20 +41,33 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, err := server.SignIn(user.Email, user.Password)
 	if err != nil {
-		formattedError := formaterror.FormatError(err.Error())
-		responses.ERROR(w, http.StatusUnprocessableEntity, formattedError)
+		// formattedError := formaterror.FormatError(err.Error())
+		responses.JSON(w, http.StatusUnprocessableEntity, struct {
+			Message string                 `json:"menssage"`
+			Status  int                    `json:"status"`
+			Error   bool                   `json:"error"`
+			Data    map[string]interface{} `json:"data"`
+		}{
+			Message: "Erorr de Login",
+			Status:  500,
+			Error:   true,
+			Data:    nil,
+		})
 		return
 	}
+	// obtener los datos del usuario que se loguea
+	err = server.DB.Debug().Model(models.UserParkinAdmin{}).Where("email = ?", user.Email).Take(&user).Error
+
 	responses.JSON(w, http.StatusOK, struct {
-		Message string `json:"menssage"`
-		Status  int    `json:"status"`
-		Error   string `json:"error"`
-		Data    string `json:"data"`
+		Message string                 `json:"menssage"`
+		Status  int                    `json:"status"`
+		Error   bool                   `json:"error"`
+		Data    map[string]interface{} `json:"data"`
 	}{
 		Message: "Login Exitoso",
 		Status:  http.StatusUnprocessableEntity,
-		Error:   "NULL",
-		Data:    token,
+		Error:   false,
+		Data:    map[string]interface{}{"token": token, "userName": user.Username, "email": user.Email, "phone": user.Phone},
 	})
 }
 
@@ -79,5 +91,5 @@ func (server *Server) SignIn(email, password string) (string, error) {
 	// responseData[0].Error = "Null"
 	// responseData[0].Data = token
 
-	return auth.CreateToken(user.ID)
+	return auth.CreateToken(user.ID, user.Email, user.Username, user.Phone)
 }
