@@ -57,6 +57,9 @@ func (u *UserParkinAdmin) Validate(action string) error {
 		if u.Password == "" {
 			return errors.New("Required Password")
 		}
+		if u.Phone == "" {
+			return errors.New("Required Phone")
+		}
 		if u.Email == "" {
 			return errors.New("Required Email")
 		}
@@ -83,6 +86,9 @@ func (u *UserParkinAdmin) Validate(action string) error {
 		}
 		if u.Password == "" {
 			return errors.New("Required Password")
+		}
+		if u.Phone == "" {
+			return errors.New("Required Phone")
 		}
 		if u.Email == "" {
 			return errors.New("Required Email")
