@@ -37,13 +37,39 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		formattedError := formaterror.FormatError(err.Error())
+		// formattedError := formaterror.FormatError(err.Error())
 
-		responses.ERROR(w, http.StatusInternalServerError, formattedError)
+		responses.JSON(w, http.StatusInternalServerError, struct {
+			Message string                 `json:"menssage"`
+			Status  int                    `json:"status"`
+			Error   bool                   `json:"error"`
+			Data    map[string]interface{} `json:"data"`
+		}{
+			Message: "Error de Registro",
+			Status:  500,
+			Error:   true,
+			Data:    nil,
+		})
 		return
 	}
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.ID))
-	responses.JSON(w, http.StatusCreated, userCreated)
+	responses.JSON(w, http.StatusCreated, struct {
+		Message string                 `json:"menssage"`
+		Status  int                    `json:"status"`
+		Error   bool                   `json:"error"`
+		Data    map[string]interface{} `json:"data"`
+	}{
+		Message: "Registro Exitoso",
+		Status:  http.StatusUnprocessableEntity,
+		Error:   false,
+		Data: map[string]interface{}{"id": userCreated.ID, "username": userCreated.Username,
+			"email":      userCreated.Email,
+			"phone":      userCreated.Phone,
+			"password":   userCreated.Password,
+			"tipologin":  userCreated.TipoLogin,
+			"created_at": userCreated.CreatedAt,
+			"updated_at": userCreated.UpdatedAt},
+	})
 }
 
 func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
