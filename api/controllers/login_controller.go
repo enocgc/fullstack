@@ -12,6 +12,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var responseData = []models.Response{
+	models.Response{
+		Message: "",
+		Status:  "",
+		Error:   "",
+		Data:    "",
+	},
+}
+
 func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -37,7 +46,17 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, formattedError)
 		return
 	}
-	responses.JSON(w, http.StatusOK, token)
+	responses.JSON(w, http.StatusOK, struct {
+		Message string `json:"menssage"`
+		Status  int    `json:"status"`
+		Error   string `json:"error"`
+		Data    string `json:"data"`
+	}{
+		Message: "Login Exitoso",
+		Status:  http.StatusUnprocessableEntity,
+		Error:   "NULL",
+		Data:    token,
+	})
 }
 
 func (server *Server) SignIn(email, password string) (string, error) {
@@ -54,5 +73,11 @@ func (server *Server) SignIn(email, password string) (string, error) {
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		return "", err
 	}
+	// var token=auth.CreateToken(user.ID)
+	// responseData[0].Message = "Login Exitoso"
+	// responseData[0].Status = "200"
+	// responseData[0].Error = "Null"
+	// responseData[0].Data = token
+
 	return auth.CreateToken(user.ID)
 }

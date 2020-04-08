@@ -52,7 +52,7 @@ func (u *UserParkinAdmin) Validate(action string) error {
 	switch strings.ToLower(action) {
 	case "update":
 		if u.Username == "" {
-			return errors.New("Required Nickname")
+			return errors.New("Required UserName")
 		}
 		if u.Password == "" {
 			return errors.New("Required Password")
@@ -82,7 +82,7 @@ func (u *UserParkinAdmin) Validate(action string) error {
 
 	default:
 		if u.Username == "" {
-			return errors.New("Required Nickname")
+			return errors.New("Required UserName")
 		}
 		if u.Password == "" {
 			return errors.New("Required Password")
