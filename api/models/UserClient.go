@@ -20,7 +20,7 @@ type UserParkinClient struct {
 	Phone     string    `gorm:"size:100;not null;" json:"phone"`
 	Password  string    `gorm:"size:100;not null;" json:"password"`
 	TipoRegistro string    `gorm:"size:100;not null;" json:"tiporegistro"`
-	Token string    `"json:"token"`
+	Token     string		`gorm:"type:text;" json:"token"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }

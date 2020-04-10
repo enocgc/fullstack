@@ -33,7 +33,8 @@ func (server *Server) CreateUserClient(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	token, err := auth.CreateTokenClient()
+	// fmt.Println(user.Email)
+	token, err := auth.CreateTokenClient(user.Email,user.Name,user.LastName,user.Phone)
 	user.Token = token
 	userCreated, err := user.SaveUserClient(server.DB)
 
@@ -45,6 +46,7 @@ func (server *Server) CreateUserClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.ID))
+
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
