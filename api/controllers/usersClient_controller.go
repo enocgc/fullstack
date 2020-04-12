@@ -34,13 +34,13 @@ func (server *Server) CreateUserClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// fmt.Println(user.Email)
-	token, err := auth.CreateTokenClient(user.Email,user.Name,user.LastName,user.Phone)
+	token, err := auth.CreateTokenClient(user.Email, user.Name, user.LastName, user.Phone)
 	user.Token = token
 	userCreated, err := user.SaveUserClient(server.DB)
 
 	if err != nil {
 
-		 formattedError := formaterror.FormatError(err.Error())
+		formattedError := formaterror.FormatErrorClient(err.Error())
 
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
@@ -48,7 +48,7 @@ func (server *Server) CreateUserClient(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.ID))
 
 	if err != nil {
-		formattedError := formaterror.FormatError(err.Error())
+		formattedError := formaterror.FormatErrorClient(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
@@ -61,11 +61,11 @@ func (server *Server) CreateUserClient(w http.ResponseWriter, r *http.Request) {
 		Message: "Registro Exitoso",
 		Status:  http.StatusUnprocessableEntity,
 		Error:   false,
-		Data: map[string]interface{}{"id": userCreated.ID, "name": userCreated.Name,"lastname": userCreated.LastName,
-			"email": userCreated.Email,
-			"phone": userCreated.Phone,
+		Data: map[string]interface{}{"id": userCreated.ID, "name": userCreated.Name, "lastname": userCreated.LastName,
+			"email":        userCreated.Email,
+			"phone":        userCreated.Phone,
 			"tipoRegistro": userCreated.TipoRegistro,
-			"token": userCreated.Token},
+			"token":        userCreated.Token},
 	})
 }
 
