@@ -26,26 +26,24 @@ var userParkinAdmin = []models.UserParkinAdmin{
 
 var userParkinClient = []models.UserParkinClient{
 	models.UserParkinClient{
-		Name:  "Steven ",
-		LastName:  "victor",
-		Email:     "steven@gmail.com",
-		Phone:     "83873481",
-		Password:  "password",
+		Name:         "Steven ",
+		LastName:     "victor",
+		Email:        "steven@gmail.com",
+		Phone:        "83873481",
+		Password:     "password",
 		TipoRegistro: "Facebook",
-		Token: "12345",
+		Token:        "12345",
 	},
 	models.UserParkinClient{
-		Name:  "Martin Luther",
-		LastName:  "King",
-		Email:     "luther@gmail.com",
-		Phone:     "84059516",
-		Password:  "password",
+		Name:         "Martin Luther",
+		LastName:     "King",
+		Email:        "luther@gmail.com",
+		Phone:        "84059516",
+		Password:     "password",
 		TipoRegistro: "Google",
-		Token: "12345",
+		Token:        "12345",
 	},
 }
-
-
 
 var posts = []models.Post{
 	models.Post{
@@ -126,7 +124,7 @@ func Load(db *gorm.DB) {
 			log.Fatalf("cannot seed parkInDetail table: %v", err)
 		}
 	}
-	
+
 	// crear clientes db
 	err = db.Debug().AutoMigrate(&models.UserParkinClient{}).Error
 	if err != nil {

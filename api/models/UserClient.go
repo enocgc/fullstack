@@ -13,16 +13,16 @@ import (
 )
 
 type UserParkinClient struct {
-	ID        uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	Name  string    `gorm:"size:255;not null;unique" json:"name"`
-	LastName     string    `gorm:"size:100;not null;unique" json:"lastname"`
-	Email     string    `gorm:"size:100;not null;" json:"email"`
-	Phone     string    `gorm:"size:100;not null;" json:"phone"`
-	Password  string    `gorm:"size:100;not null;" json:"password"`
+	ID           uint32    `gorm:"primary_key;auto_increment" json:"id"`
+	Name         string    `gorm:"size:255;not null;" json:"name"`
+	LastName     string    `gorm:"size:100;not null;" json:"lastname"`
+	Email        string    `gorm:"size:100;not null;" json:"email"`
+	Phone        string    `gorm:"size:100;not null;" json:"phone"`
+	Password     string    `gorm:"size:100;not null;" json:"password"`
 	TipoRegistro string    `gorm:"size:100;not null;" json:"tiporegistro"`
-	Token     string		`gorm:"type:text;" json:"token"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	Token        string    `gorm:"type:text;" json:"token"`
+	CreatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 func HashClient(password string) ([]byte, error) {
@@ -139,7 +139,6 @@ func (u *UserParkinClient) FindUserClientByID(db *gorm.DB, uid uint32) (*UserPar
 	return u, err
 }
 
-
 func (u *UserParkinClient) UpdateAUser(db *gorm.DB, uid uint32) (*UserParkinClient, error) {
 
 	// To hash the password
@@ -150,7 +149,7 @@ func (u *UserParkinClient) UpdateAUser(db *gorm.DB, uid uint32) (*UserParkinClie
 	db = db.Debug().Model(&UserParkinClient{}).Where("id = ?", uid).Take(&UserParkinClient{}).UpdateColumns(
 		map[string]interface{}{
 			"password":  u.Password,
-			"name":  u.Name,
+			"name":      u.Name,
 			"email":     u.Email,
 			"phone":     u.Phone,
 			"update_at": time.Now(),
