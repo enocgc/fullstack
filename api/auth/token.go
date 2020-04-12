@@ -25,6 +25,20 @@ func CreateToken(user_id uint32, user_email string, user_userName string, user_p
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 
 }
+func CreateTokenClientLogin(user_id uint32, user_email string, user_name string, user_lastname string, user_phone string) (string, error) {
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["user_id"] = user_id
+	claims["user_email"] = user_email
+	claims["user_name"] = user_name
+	claims["user_lastname"] = user_lastname
+	claims["user_phone"] = user_phone
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+
+}
+
 func CreateTokenClient(user_email string, user_name string, user_lastName string, user_phone string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
