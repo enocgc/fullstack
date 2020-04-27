@@ -35,10 +35,12 @@ func (server *Server) CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid, err := auth.ExtractTokenID(r)
+
 	if err != nil {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New("Unauthorized"))
 		return
 	}
+
 	if uid != post.AuthorID {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return

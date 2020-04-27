@@ -26,9 +26,11 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/clients/{id}", middlewares.SetMiddlewareJSON(s.GetUserClient)).Methods("GET") //exitoso
 	// s.Router.HandleFunc("/clients/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateUser))).Methods("PUT")
 	// s.Router.HandleFunc("/clients/{id}", middlewares.SetMiddlewareAuthentication(s.DeleteUser)).Methods("DELETE")
+	// parkin detail
+	s.Router.HandleFunc("/addParkinDetail", middlewares.SetMiddlewareJSON(s.CreateParkinDetail)).Methods("POST")
 
 	//Posts routes
-	s.Router.HandleFunc("/posts", middlewares.SetMiddlewareJSON(s.CreatePost)).Methods("POST")
+	s.Router.HandleFunc("/postsCreate", middlewares.SetMiddlewareJSON(s.CreatePost)).Methods("POST")
 	s.Router.HandleFunc("/posts", middlewares.SetMiddlewareJSON(s.GetPosts)).Methods("GET")
 	s.Router.HandleFunc("/posts/{id}", middlewares.SetMiddlewareJSON(s.GetPost)).Methods("GET")
 	s.Router.HandleFunc("/posts/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdatePost))).Methods("PUT")

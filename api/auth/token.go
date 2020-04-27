@@ -75,8 +75,11 @@ func ExtractToken(r *http.Request) string {
 	if token != "" {
 		return token
 	}
+
 	bearerToken := r.Header.Get("Authorization")
+
 	if len(strings.Split(bearerToken, " ")) == 2 {
+		// log.Println(strings.Split(bearerToken, " ")[1])
 		return strings.Split(bearerToken, " ")[1]
 	}
 	return ""
@@ -85,10 +88,12 @@ func ExtractToken(r *http.Request) string {
 func ExtractTokenID(r *http.Request) (uint32, error) {
 
 	tokenString := ExtractToken(r)
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
+		//bien
 		return []byte(os.Getenv("API_SECRET")), nil
 	})
 	if err != nil {
@@ -100,6 +105,7 @@ func ExtractTokenID(r *http.Request) (uint32, error) {
 		if err != nil {
 			return 0, err
 		}
+		// log.Println(uid)
 		return uint32(uid), nil
 	}
 	return 0, nil
