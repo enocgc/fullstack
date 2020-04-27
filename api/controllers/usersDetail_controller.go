@@ -69,14 +69,14 @@ func (server *Server) CreateParkinDetail(w http.ResponseWriter, r *http.Request)
 
 func (server *Server) GetParkinDetails(w http.ResponseWriter, r *http.Request) {
 
-	user := models.UserParkinClient{}
+	detail := models.ParkInDetail{}
+	details, err := detail.FindAllParkin(server.DB)
 
-	users, err := user.FindAllUsersClients(server.DB)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	responses.JSON(w, http.StatusOK, users)
+	responses.JSON(w, http.StatusOK, details)
 }
 
 func (server *Server) GetParkinDetail(w http.ResponseWriter, r *http.Request) {

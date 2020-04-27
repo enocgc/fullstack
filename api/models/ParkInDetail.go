@@ -71,3 +71,21 @@ func (p *ParkInDetail) SaveParkinDetail(db *gorm.DB) (*ParkInDetail, error) {
 	}
 	return p, nil
 }
+
+func (p *ParkInDetail) FindAllParkin(db *gorm.DB) (*[]ParkInDetail, error) {
+	var err error
+	parkin := []ParkInDetail{}
+	err = db.Debug().Model(&ParkInDetail{}).Limit(100).Find(&parkin).Error
+	if err != nil {
+		return &[]ParkInDetail{}, err
+	}
+	if len(parkin) > 0 {
+		for i, _ := range parkin {
+			err := db.Debug().Model(&UserParkinAdmin{}).Where("id = ?", parkin[i].Fk_ParkInAdmin).Take(&parkin[i].ParkInAdmin).Error
+			if err != nil {
+				return &[]ParkInDetail{}, err
+			}
+		}
+	}
+	return &parkin, nil
+}
