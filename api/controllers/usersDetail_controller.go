@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -71,6 +72,11 @@ func (server *Server) GetParkinDetails(w http.ResponseWriter, r *http.Request) {
 
 	detail := models.ParkInDetail{}
 	details, err := detail.FindAllParkin(server.DB)
+	log.Println(details)
+	// if err != nil {
+	// 	log.Fatal("Cannot encode to JSON ", err)
+	// }
+	// log.Fatal("succest encode to JSON ", pagesJson)
 
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
@@ -82,18 +88,37 @@ func (server *Server) GetParkinDetails(w http.ResponseWriter, r *http.Request) {
 func (server *Server) GetParkinDetail(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	uid, err := strconv.ParseUint(vars["id"], 10, 32)
+	pid, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	user := models.UserParkinClient{}
-	userGotten, err := user.FindUserClientByID(server.DB, uint32(uid))
+	detail := models.ParkInDetail{}
+
+	detailReceived, err := detail.FindDetailByID(server.DB, pid)
+	// log.Println(detailReceived)
 	if err != nil {
-		responses.ERROR(w, http.StatusBadRequest, err)
+		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	responses.JSON(w, http.StatusOK, userGotten)
+	responses.JSON(w, http.StatusOK, struct {
+		Message string                 `json:"menssage"`
+		Status  int                    `json:"status"`
+		Error   bool                   `json:"error"`
+		Data    map[string]interface{} `json:"data"`
+	}{
+		Message: "Get Parkin detail Exitoso",
+		Status:  http.StatusUnprocessableEntity,
+		Error:   false,
+		Data: map[string]interface{}{"id": detailReceived.ID, "nombreParqueo": detailReceived.NombreParqueo,
+			"horario":  detailReceived.Horario,
+			"detalle":  detailReceived.Detalle,
+			"lat":      detailReceived.Lat,
+			"long":     detailReceived.Long,
+			"phone":    detailReceived.Phone,
+			"sitioWeb": detailReceived.SitioWeb,
+			"admin":    detailReceived.Fk_ParkInAdmin},
+	})
 }
 
 func (server *Server) UpdateParkinDetail(w http.ResponseWriter, r *http.Request) {
@@ -131,6 +156,7 @@ func (server *Server) UpdateParkinDetail(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	updatedUser, err := user.UpdateAUser(server.DB, uint32(uid))
+
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)

@@ -89,3 +89,18 @@ func (p *ParkInDetail) FindAllParkin(db *gorm.DB) (*[]ParkInDetail, error) {
 	}
 	return &parkin, nil
 }
+
+func (p *ParkInDetail) FindDetailByID(db *gorm.DB, pid uint64) (*ParkInDetail, error) {
+	var err error
+	err = db.Debug().Model(&ParkInDetail{}).Where("id = ?", pid).Take(&p).Error
+	if err != nil {
+		return &ParkInDetail{}, err
+	}
+	if p.ID != 0 {
+		err = db.Debug().Model(&UserParkinAdmin{}).Where("id = ?", p.Fk_ParkInAdmin).Take(&p.ParkInAdmin).Error
+		if err != nil {
+			return &ParkInDetail{}, err
+		}
+	}
+	return p, nil
+}

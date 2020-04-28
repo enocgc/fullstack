@@ -29,6 +29,7 @@ func (s *Server) initializeRoutes() {
 	// parkin detail
 	s.Router.HandleFunc("/addParkinDetail", middlewares.SetMiddlewareJSON(s.CreateParkinDetail)).Methods("POST")
 	s.Router.HandleFunc("/getParkinDetails", middlewares.SetMiddlewareJSON(s.GetParkinDetails)).Methods("GET")
+	s.Router.HandleFunc("/getParkinDetail/{id}", middlewares.SetMiddlewareJSON(s.GetParkinDetail)).Methods("GET")
 
 	//Posts routes
 	s.Router.HandleFunc("/postsCreate", middlewares.SetMiddlewareJSON(s.CreatePost)).Methods("POST")
