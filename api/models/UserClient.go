@@ -17,7 +17,7 @@ type UserParkinClient struct {
 	Name         string    `gorm:"size:255;not null;" json:"name"`
 	LastName     string    `gorm:"size:100;not null;" json:"lastname"`
 	Email        string    `gorm:"size:100;not null;unique" json:"email"`
-	Phone        string    `gorm:"size:100;not null;" json:"phone"`
+	Phone        string    `gorm:"size:100; null;" json:"phone"`
 	Password     string    `gorm:"size:100;not null;" json:"password"`
 	TipoRegistro string    `gorm:"size:100;not null;" json:"tiporegistro"`
 	Token        string    `gorm:"type:text;" json:"token"`
@@ -96,9 +96,9 @@ func (u *UserParkinClient) Validate(action string) error {
 		if u.Password == "" {
 			return errors.New("Required Password")
 		}
-		if u.Phone == "" {
-			return errors.New("Required Phone")
-		}
+		// if u.Phone == "" {
+		// 	return errors.New("Required Phone")
+		// }
 		if u.Email == "" {
 			return errors.New("Required Email")
 		}
